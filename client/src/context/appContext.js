@@ -9,6 +9,9 @@ import {
   LOGIN_USER_SUCCESS,
   LOGIN_USER_ERROR,
   LOGOUT_USER,
+  SETUP_USER_BEGIN,
+  SETUP_USER_SUCCESS,
+  SETUP_USER_ERROR,
 } from "./actions";
 import reducer from "./reducer";
 import axios from "axios";
@@ -98,6 +101,30 @@ const AppProvider = ({ children }) => {
     clearAlert();
   };
 
+  const setupUser = async ({ currentUser, endPoint, alertText }) => {
+    dispatch({ type: SETUP_USER_BEGIN });
+    try {
+      const { data } = await axios.post(
+        `/api/v1/auth/${endPoint}`,
+        currentUser
+      );
+      // console.log(response);
+      const { user, token } = data;
+      dispatch({
+        type: SETUP_USER_SUCCESS,
+        payload: { user, token, location: user.location, alertText },
+      });
+      addUserToLocalStorage({ user, token, location: user.location });
+      // local storage later
+    } catch (error) {
+      dispatch({
+        type: SETUP_USER_ERROR,
+        payload: { msg: error.response.data.msg },
+      });
+    }
+    clearAlert();
+  };
+
   const logoutUser = async () => {
     dispatch({
       type: LOGOUT_USER,
@@ -106,7 +133,14 @@ const AppProvider = ({ children }) => {
 
   return (
     <AppContext.Provider
-      value={{ ...state, displayAlert, registerUser, loginUser, logoutUser }}
+      value={{
+        ...state,
+        displayAlert,
+        registerUser,
+        loginUser,
+        logoutUser,
+        setupUser,
+      }}
     >
       {children}
     </AppContext.Provider>
