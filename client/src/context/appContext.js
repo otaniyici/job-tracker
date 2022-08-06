@@ -9,6 +9,7 @@ import {
   LOGIN_USER_SUCCESS,
   LOGIN_USER_ERROR,
   LOGOUT_USER,
+  TOGGLE_SIDEBAR,
   SETUP_USER_BEGIN,
   SETUP_USER_SUCCESS,
   SETUP_USER_ERROR,
@@ -29,6 +30,7 @@ const initialState = {
   token: token,
   userLocation: userLocation || "",
   jobLocation: userLocation || "",
+  showSidebar: false,
 };
 
 const AppContext = React.createContext();
@@ -125,10 +127,15 @@ const AppProvider = ({ children }) => {
     clearAlert();
   };
 
+  const toggleSideBar = () => {
+    dispatch({ type: TOGGLE_SIDEBAR });
+  };
+
   const logoutUser = async () => {
     dispatch({
       type: LOGOUT_USER,
     });
+    removeUserFromLocalStorage();
   };
 
   return (
@@ -140,6 +147,7 @@ const AppProvider = ({ children }) => {
         loginUser,
         logoutUser,
         setupUser,
+        toggleSideBar,
       }}
     >
       {children}

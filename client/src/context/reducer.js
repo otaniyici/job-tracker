@@ -8,10 +8,13 @@ import {
   LOGIN_USER_SUCCESS,
   LOGIN_USER_ERROR,
   LOGOUT_USER,
+  TOGGLE_SIDEBAR,
   SETUP_USER_BEGIN,
   SETUP_USER_SUCCESS,
   SETUP_USER_ERROR,
 } from "./actions";
+
+import { initialState } from "./appContext";
 
 const reducer = (state, action) => {
   if (action.type === DISPLAY_ALERT) {
@@ -107,14 +110,17 @@ const reducer = (state, action) => {
   }
   if (action.type === LOGOUT_USER) {
     return {
-      isLoading: false,
-      showAlert: false,
-      alertText: "",
-      alertType: "",
+      ...initialState,
       user: null,
       token: null,
       userLocation: "",
       jobLocation: "",
+    };
+  }
+  if (action.type === TOGGLE_SIDEBAR) {
+    return {
+      ...state,
+      showSidebar: !state.showSidebar,
     };
   }
   throw new Error(`no such action :${action.type}`);
